@@ -1,0 +1,13 @@
+{
+  "name": "io-ts-api-express-todo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "tsc --build --watch"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "io-ts-api-express": "1.0.0"
+  }
+}

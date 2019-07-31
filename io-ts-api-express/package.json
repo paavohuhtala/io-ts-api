@@ -1,0 +1,22 @@
+{
+  "name": "io-ts-api-express",
+  "version": "1.0.0",
+  "main": "dist/index",
+  "types": "dist/index",
+  "license": "MIT",
+  "scripts": {
+    "dev": "tsc --build --watch"
+  },
+  "dependencies": {
+    "fp-ts": "^2.0.3",
+    "io-ts": "^2.0.0",
+    "io-ts-api-core": "1.0.0"
+  },
+  "peerDependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.0",
+    "typescript": "^3.5.3"
+  }
+}
