@@ -4,10 +4,19 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "tsc --build --watch"
+    "dev": "concurrently yarn:dev:client yarn:dev:server",
+    "dev:client": "nodemon --watch 'client/**/*.ts' --exec 'ts-node' client/index.ts",
+    "dev:server": "nodemon --watch 'server/**/*.ts' --exec 'ts-node' server/index.ts"
   },
   "dependencies": {
     "express": "^4.17.1",
-    "io-ts-api-express": "1.0.0"
+    "io-ts-api-express": "1.0.0",
+    "io-ts-api-fetch": "1.0.0"
+  },
+  "devDependencies": {
+    "concurrently": "^4.1.1",
+    "ts-node": "^8.3.0",
+    "nodemon": "1.19.1",
+    "typescript": "^3.5.3"
   }
 }
