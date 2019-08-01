@@ -21,30 +21,32 @@ type Route<P extends object> = StaticRoute | DynamicRoute<P>
 type HttpMethodWithBody = "post" | "put"
 type HttpMethodWithoutBody = "get" | "head" | "delete"
 
-type BodilessApi<P extends object, Res extends t.Any> = {
+export type BodilessApi<P extends object, Res extends t.Any> = {
   method: HttpMethodWithoutBody
   route: Route<P>
   resType: Res
 }
+export type AnyBodilessApi = BodilessApi<any, t.Any>
 
-type BodifulApi<P extends object, Req extends t.Any, Res extends t.Any> = {
+export type BodifulApi<
+  P extends object,
+  Req extends t.Any,
+  Res extends t.Any
+> = {
   method: HttpMethodWithBody
   route: Route<P>
   reqType: Req
   resType: Res
 }
+export type AnyBodifulApi = BodifulApi<any, t.Any, t.Any>
 
 export type Api<P extends object, Req extends t.Any, Res extends t.Any> =
   | BodilessApi<P, Res>
   | BodifulApi<P, Req, Res>
 
-export type AnyApi = Api<object, t.Any, t.Any>
+export type AnyApi = AnyBodilessApi | AnyBodifulApi
 
-export function defineApi<
-  P extends object,
-  Req extends t.Any,
-  Res extends t.Any
->(api: Api<P, Req, Res>): Api<P, Req, Res> {
+export function defineApi<A extends AnyApi>(api: A): A {
   return api
 }
 

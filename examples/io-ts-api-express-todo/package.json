@@ -4,10 +4,18 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "tsc --build --watch"
+    "dev": "concurrently \"yarn:dev:frontend\" \"yarn:dev:server\" ",
+    "dev:client": "ts-node ./client/index.ts",
+    "dev:server": "ts-node ./server/index.ts"
   },
   "dependencies": {
     "express": "^4.17.1",
-    "io-ts-api-express": "1.0.0"
+    "io-ts-api-express": "1.0.0",
+    "io-ts-api-fetch": "1.0.0"
+  },
+  "devDependencies": {
+    "concurrently": "^4.1.1",
+    "ts-node": "^8.3.0",
+    "typescript": "^3.5.3"
   }
 }

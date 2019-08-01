@@ -1,14 +1,7 @@
 import * as t from "io-ts"
 import { either } from "fp-ts"
 import { Request, Response, Router } from "express"
-import {
-  Api,
-  ReqOf,
-  ResOf,
-  ParamsOf,
-  AnyApi,
-  hasRequestBody
-} from "io-ts-api-core"
+import { Api, AnyApi, hasRequestBody } from "io-ts-api-core"
 
 export type ApiRequest<Params extends object, Req extends t.Any> = Omit<
   Request,
@@ -35,7 +28,7 @@ function formatRoute(api: AnyApi) {
 }
 
 export function mountApi<
-  P extends object | never,
+  P extends object,
   Req extends t.Any,
   Res extends t.Any
 >(
