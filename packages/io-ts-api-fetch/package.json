@@ -6,6 +6,6 @@
   "license": "MIT",
   "dependencies": {
     "cross-fetch": "3.0.4",
-    "io-ts-api-core": "1.0.0"
+    "io-ts-api-core": "0.1.0"
   }
 }

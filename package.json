@@ -8,9 +8,6 @@
     "dev": "tsc --build --watch"
   },
   "workspaces": [
-    "io-ts-api-core",
-    "io-ts-api-express",
-    "io-ts-api-fetch",
-    "examples/io-ts-api-express-todo"
+    "packages/*"
   ]
 }

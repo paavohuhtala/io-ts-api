@@ -3,11 +3,13 @@
     "strict": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "composite": true
+    "composite": true,
+    "outDir": "dist"
   },
   "references": [
-    { "path": "./io-ts-api-core" },
-    { "path": "./io-ts-api-express" },
-    { "path": "./io-ts-api-fetch" }
+    { "path": "./packages/io-ts-api-core" },
+    { "path": "./packages/io-ts-api-express" },
+    { "path": "./packages/io-ts-api-fetch" },
+    { "path": "./packages/io-ts-api-express-todo" }
   ]
 }
