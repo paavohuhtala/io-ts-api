@@ -2,6 +2,12 @@
   "compilerOptions": {
     "strict": true,
     "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true
-  }
+    "esModuleInterop": true,
+    "composite": true
+  },
+  "references": [
+    { "path": "./io-ts-api-core" },
+    { "path": "./io-ts-api-express" },
+    { "path": "./io-ts-api-fetch" }
+  ]
 }

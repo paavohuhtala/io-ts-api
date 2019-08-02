@@ -16,7 +16,7 @@ type DynamicRoute<P extends object> = {
 
 type StaticRoute = string
 
-type Route<P extends object> = StaticRoute | DynamicRoute<P>
+export type Route<P extends object> = StaticRoute | DynamicRoute<P>
 
 type HttpMethodWithBody = "post" | "put"
 type HttpMethodWithoutBody = "get" | "head" | "delete"
@@ -60,5 +60,10 @@ export type ResOf<A extends AnyApi> = A extends Api<any, any, infer Res>
   ? t.TypeOf<Res>
   : never
 
-export const hasRequestBody = (api: AnyApi): api is BodifulApi<any, any, any> =>
-  api.method == "put" || api.method == "post"
+export function isBodifulApi<
+  P extends object,
+  Req extends t.Any,
+  Res extends t.Any
+>(api: Api<P, Req, Res>): api is BodifulApi<P, Req, Res> {
+  return api.method == "put" || api.method == "post"
+}

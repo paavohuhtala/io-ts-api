@@ -7,6 +7,12 @@
   "references": [
     {
       "path": "../../io-ts-api-express"
+    },
+    {
+      "path": "../../io-ts-api-core"
+    },
+    {
+      "path": "../../io-ts-api-fetch"
     }
   ]
 }

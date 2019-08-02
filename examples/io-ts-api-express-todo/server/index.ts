@@ -1,38 +1,30 @@
-import * as t from "io-ts"
 import Express from "express"
-import { defineApi, NumberFromString } from "io-ts-api-core"
 import { mountApi } from "io-ts-api-express"
+import {
+  getTodosEndpoint,
+  createTodoEndpoint,
+  updateTodoEndpoint
+} from "../common"
 
 const app = Express()
 
-const createTodoApi = defineApi({
-  method: "post",
-  route: "/todos",
-  reqType: t.type({
-    title: t.string
-  }),
-  resType: t.type({
-    id: t.number
-  })
+let idCounter = 1
+let todos = [{ id: idCounter++, title: "Finish this example", done: false }]
+
+mountApi(app, getTodosEndpoint, (req, res) => {
+  res.send(todos)
 })
 
-const updateTodoApi = defineApi({
-  method: "put",
-  route: {
-    paramTypes: t.type({ id: NumberFromString }),
-    format: ({ id }) => `/todos/${id}`
-  },
-  reqType: t.type({
-    title: t.string
-  }),
-  resType: t.void
+mountApi(app, createTodoEndpoint, (req, res) => {
+  const id = idCounter++
+  todos.push({ ...req.body, id, done: false })
+  res.send({ id })
 })
 
-mountApi(app, createTodoApi, (req, res) => {
-  res.send({ id: 1 })
-})
-
-mountApi(app, updateTodoApi, (req, res) => {
-  console.dir(req.params.id)
+mountApi(app, updateTodoEndpoint, (req, res) => {
   res.sendStatus(200)
+})
+
+app.listen(8080, () => {
+  console.log("Server running.")
 })

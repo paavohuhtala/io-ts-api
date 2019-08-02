@@ -1,7 +1,9 @@
 import * as t from "io-ts"
+import { PathReporter } from "io-ts/lib/PathReporter"
 import { either } from "fp-ts"
-import { Request, Response, Router } from "express"
-import { Api, AnyApi, hasRequestBody } from "io-ts-api-core"
+import { Request, Response, Router, json } from "express"
+import { Api, AnyApi, isBodifulApi } from "io-ts-api-core"
+import { isLeft } from "fp-ts/lib/These"
 
 export type ApiRequest<Params extends object, Req extends t.Any> = Omit<
   Request,
@@ -38,10 +40,11 @@ export function mountApi<
 ) {
   const route = formatRoute(api)
 
-  router[api.method](route, (req: Request, res: Response) => {
-    if (hasRequestBody(api)) {
-      if (!api.reqType.is(req.body)) {
-        return res.sendStatus(400)
+  router[api.method](route, json(), (req: Request, res: Response) => {
+    if (isBodifulApi(api)) {
+      const decoded = api.reqType.decode(req.body)
+      if (isLeft(decoded)) {
+        return res.status(400).send(PathReporter.report(decoded))
       }
     }
 
