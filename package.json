@@ -1,11 +1,11 @@
 {
   "name": "io-ts-api",
-  "version": "1.0.0",
-  "main": "index.js",
+  "version": "0.1.0",
   "license": "MIT",
   "private": true,
   "scripts": {
-    "dev": "yarn workspace io-ts-api-express-todo dev"
+    "dev:example": "yarn workspace io-ts-api-express-todo dev",
+    "dev": "tsc --build --watch"
   },
   "workspaces": [
     "io-ts-api-core",
