@@ -1,6 +1,12 @@
 import * as t from "io-ts"
 import { PathReporter } from "io-ts/lib/PathReporter"
-import { BodilessApi, BodifulApi, AnyApi, isBodifulApi } from "io-ts-api-core"
+import {
+  BodilessApi,
+  BodifulApi,
+  AnyApi,
+  isBodifulApi,
+  Api
+} from "io-ts-api-core"
 import fetch from "cross-fetch"
 import { Route } from "io-ts-api-core"
 import { isLeft } from "fp-ts/lib/Either"
@@ -12,6 +18,15 @@ type FetchApiFunction<P extends object, Res> = object extends P
 type PostApiFunction<P extends object, Req, Res> = object extends P
   ? ((req: Req) => Promise<Res>)
   : ((params: P, req: Req) => Promise<Res>)
+
+type BoundApiFunction<A extends AnyApi> = A extends BodilessApi<
+  infer P,
+  infer Res
+>
+  ? FetchApiFunction<P, Res>
+  : A extends BodifulApi<infer P, infer Req, infer Res>
+  ? PostApiFunction<P, Req, Res>
+  : never
 
 export interface FetchConfig {
   baseUrl: string
@@ -141,9 +156,24 @@ export function bindApi<P extends object, Req, Res>(
   config: FetchConfig,
   api: BodifulApi<P, Req, Res>
 ): PostApiFunction<P, Req, Res>
-export function bindApi(config: FetchConfig, api: AnyApi): Function {
+export function bindApi(
+  config: FetchConfig,
+  api: AnyApi
+): BoundApiFunction<any> {
   if (isBodifulApi(api)) {
     return bindApiPost(config, api)
   }
   return bindApiFetch(config, api)
+}
+
+type Endpoints = Record<string, AnyApi>
+type BoundApis<E extends Endpoints> = { [K in keyof E]: BoundApiFunction<E[K]> }
+
+export function bindAll<E extends Endpoints>(
+  config: FetchConfig,
+  endpoints: E
+): BoundApis<E> {
+  return Object.entries(endpoints)
+    .map(e => [e[0], bindApi(config, e[1] as any)] as const)
+    .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {}) as BoundApis<E>
 }
