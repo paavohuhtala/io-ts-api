@@ -1,5 +1,5 @@
 import * as t from "io-ts"
-import { defineApi as defineEndpoint, NumberFromString } from "io-ts-api-core"
+import { IntFromString, defineEndpoint } from "io-ts-api-core"
 import { TodoCodec } from "./types"
 
 export const getTodosEndpoint = defineEndpoint({
@@ -22,7 +22,7 @@ export const createTodoEndpoint = defineEndpoint({
 export const updateTodoEndpoint = defineEndpoint({
   method: "put",
   route: {
-    paramTypes: t.type({ id: NumberFromString }),
+    paramTypes: t.type({ id: IntFromString }),
     format: ({ id }) => `/todos/${id}`
   },
   reqType: t.type({
