@@ -1,3 +1,4 @@
+import * as t from "io-ts"
 import { PathReporter } from "io-ts/lib/PathReporter"
 import { BodilessApi, BodifulApi, AnyApi, isBodifulApi } from "io-ts-api-core"
 import fetch from "cross-fetch"
@@ -46,6 +47,10 @@ async function fetchApi<P extends object, Res>(
     }
   })
 
+  if (api.resType.name === t.void.name) {
+    return undefined as any
+  }
+
   const resJson = await res.json()
 
   if (config.validateResponse) {
@@ -86,6 +91,10 @@ async function postApi<P extends object, Req, Res>(
   if (res.status >= 400) {
     const text = await res.text()
     throw new Error(`Server error: ${text}`)
+  }
+
+  if (api.resType.name === t.void.name) {
+    return undefined as any
   }
 
   const resJson = await res.json()

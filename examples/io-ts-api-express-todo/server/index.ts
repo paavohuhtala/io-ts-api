@@ -3,13 +3,14 @@ import { mountApi } from "io-ts-api-express"
 import {
   getTodosEndpoint,
   createTodoEndpoint,
-  updateTodoEndpoint
+  updateTodoEndpoint,
+  Todo
 } from "../common"
 
 const app = Express()
 
 let idCounter = 1
-let todos = [{ id: idCounter++, title: "Finish this example", done: false }]
+let todos: Todo[] = []
 
 mountApi(app, getTodosEndpoint, (req, res) => {
   res.send(todos)
@@ -22,6 +23,21 @@ mountApi(app, createTodoEndpoint, (req, res) => {
 })
 
 mountApi(app, updateTodoEndpoint, (req, res) => {
+  const id = req.params.id
+  const todo = todos.find(todo => todo.id === id)
+
+  if (todo === undefined) {
+    return res.sendStatus(404)
+  }
+
+  if (req.body.title !== undefined) {
+    todo.title = req.body.title
+  }
+
+  if (req.body.done !== undefined) {
+    todo.done = req.body.done
+  }
+
   res.sendStatus(200)
 })
 

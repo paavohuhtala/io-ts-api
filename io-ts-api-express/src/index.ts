@@ -49,7 +49,7 @@ export function mountApi<P extends object, Req, Res>(
         return res.sendStatus(400)
       }
 
-      req.params = parsedParams
+      req.params = parsedParams.right
     }
 
     cb(req, res)
