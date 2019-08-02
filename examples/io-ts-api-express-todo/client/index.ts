@@ -1,5 +1,9 @@
 import { FetchConfig, bindApi } from "io-ts-api-fetch"
-import { getTodosEndpoint, createTodoEndpoint } from "../common"
+import {
+  getTodosEndpoint,
+  createTodoEndpoint,
+  updateTodoEndpoint
+} from "../common"
 
 console.log("Client running.")
 
@@ -9,13 +13,13 @@ const config: FetchConfig = {
 
 const getTodos = bindApi(config, getTodosEndpoint)
 const createTodo = bindApi(config, createTodoEndpoint)
+const updateTodo = bindApi(config, updateTodoEndpoint)
 
 async function doStuff() {
-  let todos = await getTodos()
-  console.dir(todos, { colors: true })
-  await createTodo({ title: "Hello from client!" })
-  todos = await getTodos()
-  console.dir(todos, { colors: true })
+  const { id } = await createTodo({ title: "Demonstrate this library" })
+  console.dir(await getTodos(), { colors: true })
+  await updateTodo({ id }, { done: true })
+  console.dir(await getTodos(), { colors: true })
 }
 
 doStuff()
