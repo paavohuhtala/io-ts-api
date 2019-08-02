@@ -1,4 +1,4 @@
-import { bindApiFetch, FetchConfig, bindApiPost } from "io-ts-api-fetch"
+import { FetchConfig, bindApi } from "io-ts-api-fetch"
 import { getTodosEndpoint, createTodoEndpoint } from "../common"
 
 console.log("Client running.")
@@ -7,8 +7,8 @@ const config: FetchConfig = {
   baseUrl: "http://localhost:8080"
 }
 
-const getTodos = bindApiFetch(config, getTodosEndpoint)
-const createTodo = bindApiPost(config, createTodoEndpoint)
+const getTodos = bindApi(config, getTodosEndpoint)
+const createTodo = bindApi(config, createTodoEndpoint)
 
 async function doStuff() {
   let todos = await getTodos()
