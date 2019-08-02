@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "concurrently yarn:dev:client yarn:dev:server",
+    "dev": "concurrently yarn:dev:server yarn:dev:client",
     "dev:client": "nodemon --watch 'client/**/*.ts' --exec 'ts-node' client/index.ts",
     "dev:server": "nodemon --watch 'server/**/*.ts' --exec 'ts-node' server/index.ts"
   },

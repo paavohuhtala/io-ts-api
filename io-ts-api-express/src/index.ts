@@ -1,20 +1,19 @@
-import * as t from "io-ts"
 import { PathReporter } from "io-ts/lib/PathReporter"
 import { either } from "fp-ts"
 import { Request, Response, Router, json } from "express"
 import { Api, AnyApi, isBodifulApi } from "io-ts-api-core"
 import { isLeft } from "fp-ts/lib/These"
 
-export type ApiRequest<Params extends object, Req extends t.Any> = Omit<
+export type ApiRequest<Params extends object, Req> = Omit<
   Request,
   "body" | "params"
 > & {
   params: Params
-  body: t.TypeOf<Req>
+  body: Req
 }
 
-export type ApiResponse<Res extends t.Any> = Omit<Response, "send"> & {
-  send(obj: t.TypeOf<Res>): void
+export type ApiResponse<Res> = Omit<Response, "send"> & {
+  send(obj: Res): void
 }
 
 function formatRoute(api: AnyApi) {
@@ -29,11 +28,7 @@ function formatRoute(api: AnyApi) {
   return api.route.format(placeholders)
 }
 
-export function mountApi<
-  P extends object,
-  Req extends t.Any,
-  Res extends t.Any
->(
+export function mountApi<P extends object, Req, Res>(
   router: Router,
   api: Api<P, Req, Res>,
   cb: (req: ApiRequest<P, Req>, res: ApiResponse<Res>) => unknown

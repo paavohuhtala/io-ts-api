@@ -1,26 +1,14 @@
-import * as t from "io-ts"
-import {
-  BodilessApi,
-  BodifulApi,
-  AnyBodifulApi,
-  ParamsOf,
-  ReqOf,
-  ResOf
-} from "io-ts-api-core"
+import { BodilessApi, BodifulApi } from "io-ts-api-core"
 import fetch from "cross-fetch"
 import { Route } from "io-ts-api-core"
 
-type FetchApiFunction<P extends object, Res extends t.Any> = object extends P
-  ? (() => Promise<t.TypeOf<Res>>)
-  : ((params: P) => Promise<t.TypeOf<Res>>)
+type FetchApiFunction<P extends object, Res> = object extends P
+  ? (() => Promise<Res>)
+  : ((params: P) => Promise<Res>)
 
-type PostApiFunction<
-  P extends object,
-  Req extends t.Any,
-  Res extends t.Any
-> = object extends P
-  ? ((req: t.TypeOf<Req>) => Promise<t.TypeOf<Res>>)
-  : ((params: P, req: t.TypeOf<Req>) => Promise<t.TypeOf<Res>>)
+type PostApiFunction<P extends object, Req, Res> = object extends P
+  ? ((req: Req) => Promise<Res>)
+  : ((params: P, req: Req) => Promise<Res>)
 
 export interface FetchConfig {
   baseUrl: string
@@ -32,14 +20,15 @@ function formatRoute<P extends object>(route: Route<P>, params: P): string {
   if (typeof route === "string") {
     return route
   }
+
   return route.format(params)
 }
 
-async function fetchApi<P extends object, Res extends t.Any>(
+async function fetchApi<P extends object, Res>(
   config: FetchConfig,
   api: BodilessApi<P, Res>,
   params: P
-): Promise<t.TypeOf<Res>> {
+): Promise<Res> {
   const method = api.method.toUpperCase()
   const path = formatRoute(api.route, params)
 
@@ -63,12 +52,12 @@ async function fetchApi<P extends object, Res extends t.Any>(
   }
 }
 
-async function postApi<A extends AnyBodifulApi>(
+async function postApi<P extends object, Req, Res>(
   config: FetchConfig,
-  api: A,
-  params: ParamsOf<A>,
-  req: ReqOf<A>
-): Promise<ResOf<A>> {
+  api: BodifulApi<P, Req, Res>,
+  params: P,
+  req: Req
+): Promise<Res> {
   const method = api.method.toUpperCase()
   const path = formatRoute(api.route, params)
   const body = JSON.stringify(req)
@@ -100,29 +89,24 @@ async function postApi<A extends AnyBodifulApi>(
   }
 }
 
-export function bindApiFetch<P extends object, Res extends t.Any>(
+export function bindApiFetch<P extends object, Res>(
   config: FetchConfig,
   api: BodilessApi<P, Res>
 ): FetchApiFunction<P, Res> {
   if (typeof api.route === "object") {
-    return ((params: P) => fetchApi<P, Res>(config, api, params)) as any
+    return ((params: P) => fetchApi(config, api, params)) as any
   } else {
     return (() => fetchApi(config, api, {} as any)) as any
   }
 }
 
-export function bindApiPost<
-  P extends object,
-  Req extends t.Any,
-  Res extends t.Any
->(
+export function bindApiPost<P extends object, Req, Res>(
   config: FetchConfig,
   api: BodifulApi<P, Req, Res>
 ): PostApiFunction<P, Req, Res> {
   if (typeof api.route === "object") {
-    return ((params: P, req: t.TypeOf<Req>) =>
-      postApi(config, api, params, req)) as any
+    return ((params: P, req: Req) => postApi(config, api, params, req)) as any
   } else {
-    return ((req: t.TypeOf<Req>) => postApi(config, api, {} as any, req)) as any
+    return ((req: Req) => postApi(config, api, {} as any, req)) as any
   }
 }

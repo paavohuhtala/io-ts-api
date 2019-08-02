@@ -1,7 +1,7 @@
 import * as t from "io-ts"
 
-export const NumberFromString = new t.Type<number, string, unknown>(
-  "NumberFromString",
+export const IntFromString = new t.Type<number, string, unknown>(
+  "IntFromString",
   t.number.is,
   (u, c) => {
     if (typeof u !== "string") {
