@@ -1,6 +1,6 @@
 import * as t from "io-ts"
 import { IntFromString, defineEndpoint } from "io-ts-api-core"
-import { TodoCodec } from "./types"
+import { TodoCodec, TodoUpdateCodec } from "./types"
 
 export const getTodosEndpoint = defineEndpoint({
   method: "get",
@@ -25,8 +25,6 @@ export const updateTodoEndpoint = defineEndpoint({
     paramTypes: t.type({ id: IntFromString }),
     format: ({ id }) => `/todos/${id}`
   },
-  reqType: t.type({
-    title: t.string
-  }),
+  reqType: TodoUpdateCodec,
   resType: t.void
 })

@@ -1,6 +1,8 @@
-import { BodilessApi, BodifulApi } from "io-ts-api-core"
+import { PathReporter } from "io-ts/lib/PathReporter"
+import { BodilessApi, BodifulApi, AnyApi, isBodifulApi } from "io-ts-api-core"
 import fetch from "cross-fetch"
 import { Route } from "io-ts-api-core"
+import { isLeft } from "fp-ts/lib/Either"
 
 type FetchApiFunction<P extends object, Res> = object extends P
   ? (() => Promise<Res>)
@@ -14,6 +16,7 @@ export interface FetchConfig {
   baseUrl: string
   credentials?: Request["credentials"]
   headers?: Record<string, string>
+  validateResponse?: boolean
 }
 
 function formatRoute<P extends object>(route: Route<P>, params: P): string {
@@ -45,11 +48,16 @@ async function fetchApi<P extends object, Res>(
 
   const resJson = await res.json()
 
-  if (api.resType.is(resJson)) {
-    return resJson
-  } else {
-    throw new Error("Unexpected response from server")
+  if (config.validateResponse) {
+    const validated = api.resType.decode(resJson)
+    if (isLeft(validated)) {
+      throw new Error(
+        `Unexpected response from server: ${PathReporter.report(validated)}`
+      )
+    }
   }
+
+  return resJson as Res
 }
 
 async function postApi<P extends object, Req, Res>(
@@ -82,11 +90,16 @@ async function postApi<P extends object, Req, Res>(
 
   const resJson = await res.json()
 
-  if (api.resType.is(resJson)) {
-    return resJson
-  } else {
-    throw new Error("Unexpected response from server")
+  if (config.validateResponse) {
+    const validated = api.resType.decode(resJson)
+    if (isLeft(validated)) {
+      throw new Error(
+        `Unexpected response from server: ${PathReporter.report(validated)}`
+      )
+    }
   }
+
+  return resJson as Res
 }
 
 export function bindApiFetch<P extends object, Res>(
@@ -109,4 +122,19 @@ export function bindApiPost<P extends object, Req, Res>(
   } else {
     return ((req: Req) => postApi(config, api, {} as any, req)) as any
   }
+}
+
+export function bindApi<P extends object, Res>(
+  config: FetchConfig,
+  api: BodilessApi<P, Res>
+): FetchApiFunction<P, Res>
+export function bindApi<P extends object, Req, Res>(
+  config: FetchConfig,
+  api: BodifulApi<P, Req, Res>
+): PostApiFunction<P, Req, Res>
+export function bindApi(config: FetchConfig, api: AnyApi): Function {
+  if (isBodifulApi(api)) {
+    return bindApiPost(config, api)
+  }
+  return bindApiFetch(config, api)
 }
