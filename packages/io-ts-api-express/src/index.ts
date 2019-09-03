@@ -1,8 +1,7 @@
 import { PathReporter } from "io-ts/lib/PathReporter"
-import { either } from "fp-ts"
+import { isLeft } from "fp-ts/es6/Either"
 import { Request, Response, Router, json } from "express"
 import { Api, AnyApi, isBodifulApi } from "io-ts-api-core"
-import { isLeft } from "fp-ts/lib/These"
 
 export type ApiRequest<Params extends object, Req> = Omit<
   Request,
@@ -43,15 +42,18 @@ export function mountApi<P extends object, Req, Res>(
       }
     }
 
+    // This cast should be safe - params is of the right type, but the new express typings don't agree.
+    const validatedRequest: ApiRequest<P, Req> = req as any
+
     if (typeof api.route === "object") {
       const parsedParams = api.route.paramTypes.decode(req.params)
-      if (either.isLeft(parsedParams)) {
+      if (isLeft(parsedParams)) {
         return res.sendStatus(400)
       }
 
-      req.params = parsedParams.right
+      validatedRequest.params = parsedParams.right
     }
 
-    cb(req, res)
+    cb(validatedRequest, res)
   })
 }
