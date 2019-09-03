@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "dev:example": "yarn workspace io-ts-api-express-todo dev",
-    "dev": "tsc --build --watch"
+    "dev": "tsc --build --watch",
+    "build": "tsc --build"
   },
   "workspaces": [
     "packages/*"
