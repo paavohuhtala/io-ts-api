@@ -9,7 +9,7 @@
     "dev:server": "nodemon --watch client --watch server --watch common --ext ts --exec \"yarn ts-node server/index.ts\""
   },
   "dependencies": {
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "io-ts-api-express": "0.1.0",
     "io-ts-api-fetch": "0.1.0"
   },
